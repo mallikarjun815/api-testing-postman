@@ -1,0 +1,27 @@
+name: API Tests
+
+on:
+  push:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Newman
+        run: npm install -g newman newman-reporter-html
+
+      - name: Run API Tests
+        run: |
+          newman run collection.json \
+          -e environment.json \
+          -r html \
+          --reporter-html-export report.html
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: API-Report
+          path: report.html
