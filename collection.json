@@ -1,0 +1,316 @@
+{
+  "info": {
+    "_postman_id": "25957cd0-700f-42b0-8e86-336893ab53d7",
+    "name": "DummyJSON E-commerce API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "43275490",
+    "_collection_link": "https://go.postman.co/collection/43275490-25957cd0-700f-42b0-8e86-336893ab53d7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let jsonData=pm.response.json();\r",
+                  "// save toeken\r",
+                  "pm.environment.set(\"token\",jsonData.accessToken);\r",
+                  "\r",
+                  "// validation\r",
+                  "pm.test(\"Login Successful\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "console.log(jsonData.accessToken)"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilyspass\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url }}/auth/login",
+              "host": [
+                "{{base_url }}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Products Fetched\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "let jsonData= pm.response.json();\r",
+                  "pm.test(\"products Exists\",function(){\r",
+                  "    pm.expect(jsonData.products.length).to.have.greaterThan(0);\r",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url }}/products",
+              "host": [
+                "{{base_url }}"
+              ],
+              "path": [
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Single Product",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Product Fetched\", function () {\r",
+                  "    pm.response.to.have.status(200);\r",
+                  "});\r",
+                  "let jsonData=pm.response.json();\r",
+                  "pm.test(\"Correct PRoduct\", function(){\r",
+                  "    pm.expect(jsonData.id).to.eql(1);\r",
+                  "});\r",
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url }}/products/1",
+              "host": [
+                "{{base_url }}"
+              ],
+              "path": [
+                "products",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cart",
+      "item": [
+        {
+          "name": "Add Product To Cart",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url }}/cart",
+              "host": [
+                "{{base_url }}"
+              ],
+              "path": [
+                "cart"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User Cart",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "let jsonData = pm.response.json();\r",
+                  "\r",
+                  "// 42\r",
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));\r",
+                  "\r",
+                  "// 43\r",
+                  "pm.test(\"Carts array exists\", () => pm.expect(jsonData.carts).to.be.an(\"array\"));\r",
+                  "\r",
+                  "// 44\r",
+                  "pm.test(\"Carts not empty\", () => pm.expect(jsonData.carts.length).to.be.above(0));\r",
+                  "\r",
+                  "// Loop carts\r",
+                  "jsonData.carts.forEach((cart, index) => {\r",
+                  "\r",
+                  "    // 45\r",
+                  "    pm.test(`Cart ${index} has id`, () => pm.expect(cart.id).to.exist);\r",
+                  "\r",
+                  "    // 46\r",
+                  "    pm.test(`Cart ${index} has userId`, () => pm.expect(cart.userId).to.exist);\r",
+                  "\r",
+                  "    // 47\r",
+                  "    pm.test(`Cart ${index} products exist`, () => pm.expect(cart.products.length).to.be.above(0));\r",
+                  "\r",
+                  "    // 48\r",
+                  "    pm.test(`Cart ${index} total > 0`, () => pm.expect(cart.total).to.be.above(0));\r",
+                  "\r",
+                  "    // 49\r",
+                  "    pm.test(`Cart ${index} discounted total valid`, () => pm.expect(cart.discountedTotal).to.be.below(cart.total));\r",
+                  "\r",
+                  "    // 50\r",
+                  "    pm.test(`Cart ${index} totalQuantity > 0`, () => pm.expect(cart.totalQuantity).to.be.above(0));\r",
+                  "\r",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url }}/cart/user/1",
+              "host": [
+                "{{base_url }}"
+              ],
+              "path": [
+                "cart",
+                "user",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    }
+  ]
+}

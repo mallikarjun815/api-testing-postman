@@ -1,0 +1,22 @@
+{
+	"id": "1d998438-5c7d-44bb-b584-76bfc029afab",
+	"name": "DummyJSON Env",
+	"values": [
+		{
+			"key": "base_url ",
+			"value": "https://dummyjson.com",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"color": null,
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2026-05-05T07:57:49.967Z",
+	"_postman_exported_using": "Postman/12.9.2-260505-0232"
+}
